@@ -1,0 +1,181 @@
+{
+	"easycom": {
+		"^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue"
+	},
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/index/index",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+		}, {
+			"path": "pages/myself/myself",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+
+		}, {
+			"path": "pages/myself/boundPhone",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+
+		}, {
+			"path": "pages/gift/gift",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+
+		}, {
+			"path": "pages/integral/integral",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+
+		}, {
+			"path": "pages/index/gamedesc",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+
+		}, {
+			"path": "pages/index/message",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+
+		}, {
+			"path": "pages/integral/detail",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+
+		}, {
+			"path": "pages/myself/antiAddiction",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+
+		}, {
+			"path": "pages/myself/service",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+
+		}, {
+			"path": "pages/index/test",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+
+		}, {
+			"path": "pages/myself/sign",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+
+		}, {
+			"path": "pages/myself/modified",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+
+		}, {
+			"path": "pages/login/login",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+
+		}, {
+			"path": "pages/login/phoneLogin",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+
+		}, {
+			"path": "pages/login/verify",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+
+		}, {
+			"path": "pages/myself/realname",
+			"style": {
+				"app-plus": {
+					"titleNView": false
+				}
+			}
+
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "熙辰微游",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"tabBar": {
+		"color": "#8a8a8a",
+		"selectedColor": "#19be6b",
+		"borderStyle": "black",
+		"backgroundColor": "#ffffff",
+		"list": [{
+				"pagePath": "pages/index/index",
+				"iconPath": "static/index_normal.png",
+				"selectedIconPath": "static/index.png",
+				"text": "游戏"
+			},
+			{
+				"pagePath": "pages/gift/gift",
+				"iconPath": "static/gift_normal.png",
+				"selectedIconPath": "static/gift.png",
+				"text": "礼包"
+			},
+			{
+				"pagePath": "pages/integral/integral",
+				"iconPath": "static/intergal_normal.png",
+				"selectedIconPath": "static/integral.png",
+				"text": "积分商城"
+			},
+			{
+				"pagePath": "pages/myself/myself",
+				"iconPath": "static/myself_normal.png",
+				"selectedIconPath": "static/myself.png",
+				"text": "个人"
+			}
+		]
+	}
+
+}
