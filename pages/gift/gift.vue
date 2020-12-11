@@ -53,20 +53,6 @@
 					<view class="gift-c-b">{{item.description}}</view>
 				</view>
 				<u-button type="success" class="gift-btn" @click="getGiftBag(item)">{{item.received?'领取':'查看'}}</u-button>
-				<!-- <u-popup v-model="getGiftshow" mode="center" border-radius="14" length="80%">
-					<view style="padding: 30rpx 30rpx;">
-						<view class="" style="text-align: left;margin: 10rpx 0;width: 100%;">提示</view>
-						<view class="" style="margin: 20rpx;text-align: center;font-size: 28rpx;">
-							<span style=" color: #82848A;">兑换码：</span>
-							<span style="background-color: #ebebeb;padding: 0 20rpx;color: #808080;">{{redeemCode}}</span>
-						</view>
-						<view style="text-align: left;font-size: 24rpx;color: #808080;margin-top: 30rpx;">复制兑换码，去游戏中使用</view>
-						<view style="text-align: right;margin-top: 20rpx;">
-							<u-button size="mini" style="margin-right: 20rpx;padding: 10rpx 30rpx;" @click="cancel">取消</u-button>
-							<u-button size="mini" style="margin-right: 20rpx;padding: 10rpx 30rpx;" type="success" @click="copy(redeemCode)">复制</u-button>
-						</view>
-					</view>
-				</u-popup> -->
 			</view>
 		</view>
 		<u-divider style="margin: 20rpx 0;background-color: #f3f6fa;">没有更多了</u-divider>
@@ -130,12 +116,7 @@
 				this.$u.api.getInfo().then(res => {
 					if (res.status) {
 						this.userInfo = res.data
-					} else {
-						//跳转登录页
-						uni.reLaunch({
-							url: '../login/login'
-						})
-					}
+					} 
 				})
 			},
 			getGiftInfo() {
