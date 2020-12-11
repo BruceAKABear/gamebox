@@ -1,7 +1,7 @@
 <template>
 	<view class="container">
 		<!-- 用户信息  -->
-		<view class="top-box-login" v-if="userInfo" @click="loginshow">
+		<view class="top-box-login" v-if="userInfo">
 			<image class="top-box-img" :src="userInfo.avatar"></image>
 			<view class="nickname">{{userInfo.userName}}</view>
 		</view>
@@ -33,7 +33,7 @@
 					<u-icon name="arrow-right" color="#c8c9cc" size="34"></u-icon>
 				</view>
 			</view>
-			<u-popup v-model="phoneN" mode="center" border-radius="14" length="60%">
+			<u-popup mode="center" border-radius="14" length="60%">
 				<view style="padding: 30rpx 30rpx;">
 					<view class="" style="text-align: center;margin: 20rpx 0;width: 100%;">绑定手机</view>
 					<view class="" style="display: flex;justify-content: space-around;margin: 50rpx;">您已完成绑定</view>
@@ -46,7 +46,7 @@
 					<u-icon name="arrow-right" color="#c8c9cc" size="34"></u-icon>
 				</view>
 			</view>
-			<view class="center-box-list" @click="attestationOpen">
+			<view class="center-box-list" @click="gotoRealname">
 				<u-icon name="account-fill" color="#ff6826" size="46"></u-icon>
 				<view class="text-box">
 					<view class="title">实名认证</view>
@@ -69,23 +69,19 @@
 			</view>
 		</view>
 		<!-- v-if="logged" -->
-		<u-button class="btn-login" type="success" shape="circle" :ripple="true" ripple-bg-color="#0055ff" @click="clear"
-		 v-if="userInfo">退出登录</u-button>
+		<u-button class="btn-login" type="success" :ripple="true" ripple-bg-color="#0055ff" @click="doLogout" v-if="userInfo">退出登录</u-button>
 	</view>
 </template>
 
 <script>
 	import {
 		getUserToken,
-		getUserInfo,
-		clearUserInfo
-	} from '../../utils/UserUtil.js';
+		clearToken
+	} from '../../utils/token.js'
 	export default {
 		data() {
 			return {
-				userInfo: {},
-				realName: false,
-				signLogout: false,
+				userInfo: null,
 				phoneN: false,
 			}
 		},
@@ -93,93 +89,92 @@
 		 * 页面显示生命周期
 		 */
 		onShow() {
-			this.getUserInfo()
+			let token = getUserToken()
+			if (token) {
+				this.getUserInfo()
+			}
 		},
 		methods: {
-			// 跳转手机号码绑定
+
+			getUserInfo() {
+				this.$u.api.getInfo().then(res => {
+					if (res.status) {
+						this.userInfo = res.data
+					}
+				})
+			},
+
+			/**
+			 * 绑定手机
+			 */
 			boundPhone() {
-				if (getUserToken() === null) {
+				if (!this.userInfo) {
+					//未登录跳转到登录页
 					uni.navigateTo({
 						url: '../login/login'
 					})
 				} else {
-					if (!this.userinfos.phone) {
+					if (!this.userInfo.phone) {
 						uni.navigateTo({
 							url: '../myself/boundPhone'
 						})
 					} else {
 						uni.showToast({
 							title: '已绑定手机号',
-							duration: 2000
-						});
+							duration: 1500,
+							mask: true
+						})
 					}
 				}
+			},
 
-			},
-			/**
-			 * 获取用户信息
-			 */
-			getUserInfo() {
-				this.userInfo = getUserInfo()
-			},
-			clear() {
+			doLogout() {
 				uni.showModal({
 					title: '提示',
 					content: '确认要退出吗？',
 					success: function(res) {
 						if (res.confirm) {
-							console.log('用户点击确定');
-							clearUserInfo()
 							this.userinfos = {}
-							uni.switchTab({
+							clearToken()
+							uni.reLaunch({
 								url: '../index/index'
 							})
-							// this.logged = false
-						} else if (res.cancel) {
-							console.log('用户点击取消');
 						}
 					}
-				});
+				})
 			},
-			// 实名认证页面打开or关闭
-			attestationOpen() {
-				if (!this.logged) {
-					uni.navigateTo({
-						url: '../login/login'
-					})
-					// this.attestationShow=false
-				} else {
-					//已经完成认证
-					if (this.realName) {
-						// this.realN = true
+			/**
+			 * 实名认证
+			 */
+			gotoRealname() {
+				if (this.userInfo) {
+					if (this.userInfo.realnamed) {
+						//已经完成实名
 						uni.showToast({
 							title: '已完成认证',
-							duration: 2000
+							duration: 1500,
+							mask: true
 						});
-					} else { //未完成认证
+					} else {
+						//未实名
 						uni.navigateTo({
 							url: '../myself/realname'
 						})
 					}
+
+				} else {
+					//未登录
+					uni.navigateTo({
+						url: '../login/login'
+					})
 				}
+
 			},
+
 			// 登录
 			loginshow() {
 				uni.navigateTo({
 					url: '../login/login'
-				})
-			},
-			// 实名认证接口
-			realNameDto() {
-				this.$u.api.realName({
-					idNumber: this.realParam.number,
-					name: this.realParam.realname,
-					type: this.realParam.type
-				}).then(res => {
-					if (res.status) {
-						console.log("实名认证成功", res)
-						this.attestationShow = false;
-					}
 				})
 			},
 			// 跳转防沉迷页面
@@ -208,7 +203,8 @@
 			},
 
 			modifiedData() {
-				if (this.logged = getUserToken() !== null) {
+				if (this.userInfo) {
+					//已登录直接去页面
 					uni.navigateTo({
 						url: '../myself/modified'
 					})
@@ -234,8 +230,8 @@
 	}
 
 	.top-box-img {
-		width: 100rpx;
-		height: 100rpx;
+		width: 120rpx;
+		height: 120rpx;
 		margin-top: 30rpx;
 		border-radius: 50%;
 	}

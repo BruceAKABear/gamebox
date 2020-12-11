@@ -1,6 +1,6 @@
 {
     "name" : "熙辰微游",
-    "appid" : "__UNI__1344326",
+    "appid" : "__UNI__BAF058F",
     "description" : "熙辰微游",
     "versionName" : "1.0.0",
     "versionCode" : "100",
@@ -52,6 +52,23 @@
                     "alipay" : {
                         "__platform__" : [ "android" ]
                     }
+                },
+                "ad" : {}
+            },
+            "icons" : {
+                "android" : {
+                    "hdpi" : "C:/Users/BLab/Desktop/APP图标（修改）/72.png",
+                    "xhdpi" : "C:/Users/BLab/Desktop/APP图标（修改）/96.png",
+                    "xxhdpi" : "C:/Users/BLab/Desktop/APP图标（修改）/144.png",
+                    "xxxhdpi" : "C:/Users/BLab/Desktop/APP图标（修改）/192.png"
+                }
+            },
+            "splashscreen" : {
+                "androidStyle" : "default",
+                "android" : {
+                    "hdpi" : "C:/Users/BLab/Desktop/加载图PNG/加载图480-762.png",
+                    "xhdpi" : "C:/Users/BLab/Desktop/加载图PNG/加载图720-1242.png",
+                    "xxhdpi" : "C:/Users/BLab/Desktop/加载图PNG/加载图1080-1882.png"
                 }
             }
         }

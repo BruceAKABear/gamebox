@@ -5,95 +5,86 @@
 		<view class="phone-box">
 			<view class="phone-login-title">输入验证码</view>
 			<view class="phone-login-desc">验证码已发送</view>
-			<u-message-input :maxlength="6" :focus="true" @finish="finish"></u-message-input>
-			<view class="login-protocol" v-if="yzmbothide">{{times}}秒后重新获取验证码</view>
-			<view class="login-protocol" v-if="yzmbotshou" @click="getyzm">重新获取验证码</view>
+			<u-message-input :maxlength="6" :focus="true" @finish="finish" :breathe="true"></u-message-input>
+			<view class="login-protocol" @click="reGetCode">{{times>0?times+'秒后重新获取验证码':'重新获取验证码'}}</view>
 		</view>
-		<u-button class="btn-login" type="success" shape="circle" size="default" @click="login">登录</u-button>
+		<u-button class="btn-login" type="success" size="default" @click="doLogin" :disabled="!canSubmit">登录</u-button>
 	</view>
 </template>
 
 <script>
 	import {
-		saveUserToken,
-		saveUserInfo
-	} from '../../utils/cs.js';
+		saveUserToken
+	} from '../../utils/token.js';
 	export default {
-		//import引入的组件需要注入到对象中才能使用
-		components: {},
 		data() {
-			//这里存放数据
 			return {
-				times: 10,
-				yzmbotshou: false,
-				yzmbothide: false,
-				phone: '',
+				canSubmit: false,
+				times: 300,
+				phoneNumber: '',
 				code: ''
 			};
 		},
-		onLoad(phoneNumber) {
-			this.phone = phoneNumber
-			console.log(this.phone)
-			this.gettime()
+		/**
+		 * 页面加载时封装手机号
+		 * @param {Object} phoneNumber
+		 */
+		onLoad(params) {
+			this.phoneNumber = params.phoneNumber
+			this.getCode()
 		},
 		//方法集合
 		methods: {
-			finish(e) {
-				this.code = e
-				console.log('输入结束，当前值为：' + e);
+
+			getCode() {
+				this.$u.api.getLoginCode({
+					phone: this.phoneNumber
+				}).then(res => {
+					//验证码发送成功后，倒计时
+					this.timeDecrease()
+				})
 			},
-			gettime() {
-				var num = 10;
-				this.yzmbotshou = false,
-					this.yzmbothide = true
+			/**
+			 * 时间减少
+			 */
+			timeDecrease() {
+				var that = this
 				var interval = setInterval(() => {
-					if (this.is_sendsms == false) {
-						this.sendsms()
+					if (that.times > 0) {
+						--that.times
+					} else {
+						//停止
+						clearInterval(interval)
 					}
-					--this.times
 				}, 1000)
-				setTimeout(() => {
-					clearInterval(interval)
-					this.yzmbotshou = true,
-						this.yzmbothide = false,
-						this.times = num
-				}, 10000)
 			},
-			getyzm() {
-				// this.$u.api.getLoginCode({
-				// 	phone: this.phoneNumber
-				// }).then(res => {
-				// 	this.gettime()
-				// 	console.log("验证码", res)
-				// })
+			/**
+			 * 重新获取验证码
+			 */
+			reGetCode() {
+				if (this.times <= 0) {
+					this.times = 300
+					this.getCode()
+				}
 			},
-			login() {
-				this.yzmbotshou = true
-				this.yzmbothide = false
-				console.log(this.code)
-				console.log(this.phone.phoneNumber)
+			doLogin() {
 				this.$u.api.loginByPhone({
 					code: this.code,
-					phone: this.phone.phoneNumber
+					phone: this.phoneNumber
 				}).then(res => {
 					if (res.status) {
 						saveUserToken(res.data);
-						this.userinfo()
-						uni.switchTab({
+						uni.reLaunch({
 							url: '../index/index'
-						});
+						})
 					}
 				})
 			},
-			userinfo() {
-				this.$u.api.getInfo({}).then(res => {
-					if (res.status) {
-						saveUserInfo(res.data);
-						console.log("用户信息", res)
-					}
-				})
-			},
-		},
+			finish(e) {
+				this.code = e
+				this.canSubmit = true
+			}
+		}
 	}
 </script>
 <style scoped>
@@ -123,10 +114,12 @@
 	.btn-login {
 		font-size: 26rpx;
 		width: 80%;
-		margin-top: 50rpx;
+		margin-top: 80rpx;
 	}
 
 	.login-protocol {
+		margin-top: 10rpx;
 		font-size: 24rpx;
+		color: #C8C9CC;
 	}
 </style>

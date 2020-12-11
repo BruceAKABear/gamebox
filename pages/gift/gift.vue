@@ -1,5 +1,5 @@
 <template>
-	<view class="container">
+	<view class="container" style="overflow-x: hidden;">
 		<u-top-tips ref="uTips"></u-top-tips>
 		<!-- 用户信息 -->
 		<view class="top-box-login" style="margin-bottom: 20rpx;" v-if="logged">
@@ -154,7 +154,7 @@
 				})
 				// #endif
 				// #ifdef APP-PLUS
-				
+
 				uni.setClipboardData({
 					data: data,
 					success: function() {

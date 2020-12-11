@@ -1,9 +1,5 @@
 <template>
 	<view class="container">
-		<!-- <u-navbar title="绑定手机" :background="background" titleColor="#ffffff" back-icon-color="#ffffff"></u-navbar> -->
-		<!-- 	<view class="top-logo"  style="border-radius: 50%;">
-			<image src="../../static/logo.png" mode=""></image>
-		</view> -->
 		<view class="top-logo">
 			<image class="top-logo-img" src="../../static/logo.png" mode=""></image>
 		</view>
@@ -100,6 +96,8 @@
 <style scoped lang="scss">
 	page {
 		background-color: #f3f6fa;
+		height: 100%;
+		width: 100%;
 	}
 
 	.top-logo {

@@ -8,21 +8,21 @@
 			<view class="personal-list">
 				<view class="personal-list-name">昵称</view>
 				<view style="display: flex;justify-content: space-evenly;">
-					<view class="personal-list-info" v-model="username">{{userInfo.userName}}</view>
+					<view class="personal-list-info">{{userInfo.userName}}</view>
 					<u-icon name="arrow-right" color="#c8c8c8" size="28"></u-icon>
 				</view>
 			</view>
 			<view class="personal-list">
 				<view class="personal-list-name">手机</view>
 				<view style="display: flex;">
-					<view class="personal-list-info">{{phone}}</view>
+					<view class="personal-list-info">{{userInfo.phone}}</view>
 					<u-icon name="arrow-right" color="#c8c8c8" size="28"></u-icon>
 				</view>
 			</view>
 			<view class="personal-list">
 				<view class="personal-list-name">实名认证</view>
-				<view class="" style="display: flex;" @click="gorealName">
-					<view class="personal-list-info">{{realName}}</view>
+				<view class="" style="display: flex;" @click="goRealName">
+					<view class="personal-list-info">{{userInfo.realnamed?'已实名':'去实名'}}</view>
 					<u-icon name="arrow-right" color="#c8c8c8" size="28"></u-icon>
 				</view>
 			</view>
@@ -31,45 +31,23 @@
 </template>
 
 <script>
-	import {
-		getUserToken,
-		saveUserInfo,
-		getUserInfo
-	} from '../../utils/cs.js';
 	export default {
 		data() {
 			return {
-				background: {
-					backgroundColor: '#ffffff',
-				},
-				userInfo: {
-					avatar: '', //头像
-					phone: '', //手机号
-					userName: '', //用户名
-					realnamed: false
-				},
-				username: '',
-				phone: '',
-				realName: '', //实名认证状态
+				userInfo: {}
 			}
 		},
 		onShow() {
-			this.getInfo()
+			this.getUserInfo()
 		},
 		methods: {
-			getInfo() {
-				this.userInfo = getUserInfo()
-				this.phone = this.userInfo.phone.replace(/([0-9]{3})([0-9]{4})([0-9]{4})/, "$1****$3")
-				console.log('用户信息', this.userInfo)
-				console.log('手机号码', this.phone)
-				if (!this.userInfo.realnamed) {
-					this.realName = '立即认证'
-				} else {
-					this.realName = '已认证'
-				}
-				if (this.userInfo.phone === '') {
-					this.phone = '暂未绑定手机号'
-				}
+			getUserInfo() {
+				this.$u.api.getInfo().then(res => {
+					if (res.status) {
+						this.userInfo = res.data
+						this.userInfo.phone = this.userInfo.phone.replace(/([0-9]{3})([0-9]{4})([0-9]{4})/, "$1****$3")
+					}
+				})
 			},
 			upfile() {
 				let _this = this;
@@ -95,12 +73,12 @@
 					}
 				});
 			},
-			gorealName() {
+			goRealName() {
 				if (!this.userInfo.realnamed) {
-					// uni.navigateTo({
-					// 	url:''
-					// })
-					console.log('去认证')
+					//未实名，跳转实名页
+					uni.navigateTo({
+						url: '../myself/realname'
+					})
 				}
 			}
 		}
@@ -116,18 +94,18 @@
 		width: 100%;
 		text-align: center;
 		padding: 50rpx 0;
-		background-color: #ffffff;
+		background-color: #19be6b;
 		margin-bottom: 20rpx;
 	}
 
 	.head-img {
-		width: 120rpx;
+		width: 130rpx;
 		height: 130rpx;
 		border-radius: 50%;
 	}
 
 	.head-title {
-		color: #999999;
+		color: #FFFFFF;
 		font-size: 24rpx;
 	}
 

@@ -115,14 +115,6 @@
 			}
 
 		}, {
-			"path": "pages/login/phoneLogin",
-			"style": {
-				"app-plus": {
-					"titleNView": false
-				}
-			}
-
-		}, {
 			"path": "pages/login/verify",
 			"style": {
 				"app-plus": {

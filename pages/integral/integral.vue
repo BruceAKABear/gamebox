@@ -1,18 +1,18 @@
 <template>
 	<view class="container">
 		<!-- 用户信息 -->
-		<view class="top-box-login" style="margin-bottom: 20rpx;" v-if="logged">
-			<image class="top-box-img" :src="userInfos.avatar" mode=""></image>
+		<view class="top-box-login" style="margin-bottom: 20rpx;" v-if="userInfo">
+			<image class="top-box-img" :src="userInfo.avatar" mode=""></image>
 			<view class="top-info">
-				<view class="nickname">{{userInfos.userName}}</view>
+				<view class="nickname">{{userInfo.userName}}</view>
 				<view class="integral-box">
 					<image class="integral-img" src="../../static/integral_num.png"></image>
-					<view class="integral-num">{{logged?userInfos.points:0}}</view>
+					<view class="integral-num" style="font-size: 25rpx;">{{userInfo.points}}</view>
 				</view>
 			</view>
 		</view>
 		<!-- 未登录用户 -->
-		<view class="top-box-login" style="margin-bottom: 20rpx;" v-if="!logged">
+		<view class="top-box-login" style="margin-bottom: 20rpx;" v-if="!userInfo">
 			<image class="top-box-img" src="../../static/head.jpg" mode=""></image>
 			<view class="top-info">
 				<view class="nickname">游客玩家</view>
@@ -32,7 +32,7 @@
 			</view>
 			<!-- 积分商城 -->
 			<view class="integralInfo-box" v-show="Inv == 0">
-				<u-notice-bar mode="vertical" :list="list" style="color:#ffaa00 ;background-color: #f3f6fa;"></u-notice-bar>
+				<u-notice-bar mode="vertical" :list="receiveLogs" style="color:#ffaa00 ;background-color: #f3f6fa;"></u-notice-bar>
 				<view class="inv-h-w">
 					<view :class="['inv-h',integralShop==0?'integralBox':'']" @click="integralShop=0">虚拟物品</view>
 					<view :class="['inv-h',integralShop==1?'integralBox':'']" @click="integralShop=1">实物商品</view>
@@ -40,7 +40,7 @@
 				<!-- 虚拟物品 -->
 				<view class="virtual" v-show="integralShop == 0">
 					<view style="padding: 30rpx 30rpx;background-color: #ffffff;margin-bottom: 20rpx;border-bottom: 1rpx solid #DCDFE6;"
-					 v-for="info in integralGift" :key="info.id">
+					 v-for="info in virtualProductList" :key="info.id">
 						<view class="" style="display: flex;">
 							<image style="width: 100rpx;height: 100rpx;" :src="info.game.thumb"></image>
 							<view class="" style="height: 100rpx;line-height: 100rpx;margin-left: 30rpx;">{{info.game.name}}</view>
@@ -52,7 +52,7 @@
 								<!-- {{item.detail}} -->
 								<p style="color: #999999;font-size: 26rpx;margin-top: 15rpx;padding-right: 10rpx;" v-html="item.detail"></p>
 							</view>
-							<button type="default" class="integral-btn">{{item.needPoints}}积分</button>
+							<button type="default" class="integral-btn" :style="userInfo.points>=item.needPoints?{'background-color':'#19be6b'}:''">{{item.needPoints}}积分</button>
 						</view>
 					</view>
 					<u-divider style="margin-top: 80rpx;">没有更多了</u-divider>
@@ -62,7 +62,7 @@
 				<view class="" v-show="integralShop == 1">
 					<view style="background-color: #ffffff;">
 						<view style="display: flex; flex-direction: row;flex-wrap: wrap;margin: 0 5%;padding: 30rpx 0;">
-							<view style="width: 50%;margin-bottom: 16upx;" v-for="info in entityList.records" :key="info.id" @click="goDetail(info)">
+							<view style="width: 50%;margin-bottom: 16upx;" v-for="info in productList.records" :key="info.id" @click="goDetail(info)">
 								<view>
 									<image :src="info.thumb" style="width: 96%;justify-content: space-between;border-radius: 10rpx;height: 180rpx;"></image>
 									<view style="text-align: left;font-size: 30rpx;">{{info.name}}</view>
@@ -172,7 +172,7 @@
 						</view>
 						<button class="task-btn" type="default" @click="getPoints(5)">{{isReanlName}}</button>
 					</view>
-					<!-- 实名认证L -->
+					<!-- 实名认证-->
 					<u-popup v-model="attestationShow" mode="center" border-radius="14" width="600rpx" height="450rpx">
 						<view style="padding: 30rpx 30rpx;">
 							<view class="" style="text-align: center;margin: 20rpx 0;width: 100%;">实名认证</view>
@@ -200,12 +200,11 @@
 								 v-for="info in inntergralInfo" :key="info.id">
 									<view class="" style="line-height: 50rpx;">
 										<view class="" style="font-size: 24rpx;color: #808080;">{{info.getDate}}</view>
-										<!-- <view class="">{{info.type===1?'签到':'首充'}}</view> -->
-										<view class="" v-if="info.type===1">签到</view>
-										<view class="" v-else-if="info.type===2">每日首充</view>
-										<view class="" v-else-if="info.type===3">充值</view>
-										<view class="" v-else-if="info.type===4">绑定手机</view>
-										<view class="" v-else-if="info.type===5">实名认证</view>
+										<view class="" v-if="info.type===1" style="font-size: 24rpx;color: #808080;">签到</view>
+										<view class="" v-else-if="info.type===2" style="font-size: 24rpx;color: #808080;">每日首充</view>
+										<view class="" v-else-if="info.type===3" style="font-size: 24rpx;color: #808080;">充值</view>
+										<view class="" v-else-if="info.type===4" style="font-size: 24rpx;color: #808080;">绑定手机</view>
+										<view class="" v-else-if="info.type===5" style="font-size: 24rpx;color: #808080;">实名认证</view>
 									</view>
 									<view class="" style="line-height: 100rpx;font-size: 24rpx;color: #19BE6B;">+{{info.points}}积分</view>
 								</view>
@@ -225,64 +224,33 @@
 				</view>
 			</view>
 			<!-- 积分规则 -->
-			<view class="integralInfo-box" v-show="Inv == 3">
-				<view class="" style="background-color: #ffffff;padding: 20rpx 0;">
-					<view class="info-desc">
-						<p class="info-title">一：什么是积分？</p>
-						<p class="info-desc-info">积分是为了感谢广大熙辰微游粉丝对熙辰微游的支持，根据用户体验游戏，游戏中心活跃度等情况推出的一项长期的回馈服务。积分作为积分商城的一种货币，可用于兑换积分商城里面的各种虚拟奖励，游戏礼包等。</p>
-						<p class="info-title">二：如何使用积分？</p>
-						<p class="info-desc-info">进入积分商城，找到自己喜欢的商品并点击，即可显示商品详情，当达到所需的兑换条件时，点击兑换按钮即可。</p>
-						<p class="info-title">三：哪些地方可以使用积分？</p>
-						<p class="info-title">1、游戏特权</p>
-						<p class="info-desc-info">限量游戏礼包，游戏道具随心兑换</p>
-						<p class="info-title">2、商城礼物</p>
-						<p class="info-desc-info">限时限量兑换虚拟商品</p>
-						<p class="info-title">四：积分如何获取？</p>
-						<p class="info-title">1、每日签到</p>
-						<p class="info-desc-info">进入游戏中心“个人”界面或者积分商城界面，点击签到，即可获得对应的积分奖励。</p>
-						<p class="info-title">2、游戏充值</p>
-						<p class="info-desc-info">在平台任意游戏内每充值1元获得10积分</p>
-						<p class="info-title">五：积分的有效期是多久？</p>
-						<p class="info-desc-info">积分永久有效</p>
-					</view>
-				</view>
+			<view v-show="Inv == 3">
+				<u-parse :html="guize">
+				</u-parse>
 			</view>
 		</view>
 	</view>
 </template>
 
 <script>
-	import {
-		getUserToken,
-		getUserInfo,
-	} from '../../utils/cs.js';
 	export default {
 		data() {
 			return {
-				userInfos: {
-					avatar: '',
-					userName: '',
-					id: ''
-				},
-				Inv: 0, //积分选项卡显示
-				integralBox: 0, //获取记录&兑换记录选项卡
-				integralShop: 0, //虚拟物品&实物商品选项卡
-				pointstype: 0, //获取积分类型
-				logged: false, //是否登录
-				isReanlName: '+1000积分', //实名认证
-				isBoundPhone: '+1000积分', //手机绑定
-				isFirstCharge: '+100积分', //每日首充
-				ischeckIn: '+10积分', //签到
-				list: [
-					'[二师兄]兑换了入门礼包',
-					'[STAR]兑换了入门礼包',
-					'[晴天]兑换了入门礼包',
-					'[不忘初心]兑换了入门礼包'
-				], //滚动通知
-				//虚拟物品列表
+				guize: '<section class="_135editor" data-role="paragraph"><p style="text-indent: 2em; margin-left: 5px; margin-right: 5px;"><strong><span style="font-size: 16px;">一 什么是积分？</span></strong></p></section><section class="_135editor" data-role="paragraph"><p style="text-indent: 2em; margin-left: 5px; margin-right: 5px;"><span style="font-size: 16px; color: #7f7f7f;">积分是为了感谢广大熙辰微游粉丝对熙辰微游的支持，根据用户体验游戏，游戏中心活跃度等情况推出的一项长期的回馈服务。积分作为积分商城的一种货币，可用于兑换积分商城里面的各种虚拟奖励，游戏礼包等。</span></p><p><br/></p></section><section class="_135editor" data-role="paragraph"><p style="text-indent: 2em; margin-left: 5px; margin-right: 5px;"><strong><span style="font-size: 16px;">二 如何使用积分？</span></strong></p></section><section class="_135editor" data-role="paragraph"><p style="text-indent: 2em; margin-left: 5px; margin-right: 5px;"><span style="font-size: 16px; color: #7f7f7f;">进入积分商城，找到自己喜欢的商品并点击，即可显示商品详情，当达到所需的兑换条件时，点击兑换按钮即可。</span></p><p><br/></p></section><section class="_135editor" data-role="paragraph"><p style="text-indent: 2em; margin-left: 5px; margin-right: 5px;"><strong><span style="font-size: 16px;">三 哪些地方可以使用积分？</span></strong></p></section><section class="_135editor" data-role="paragraph"><p style="text-indent: 2em; margin-left: 5px; margin-right: 5px;"><span style="font-size: 16px;">1、游戏特权</span></p></section><section class="_135editor" data-role="paragraph"><p style="text-indent: 2em; margin-left: 5px; margin-right: 5px;"><span style="font-size: 16px; color: #7f7f7f;">限量游戏礼包，游戏道具随心兑换</span></p></section><section class="_135editor" data-role="paragraph" ><p style="text-indent: 2em; margin-left: 5px; margin-right: 5px;"><span style="font-size: 16px;">2、商城礼物</span></p></section><section class="_135editor" data-role="paragraph"><p style="text-indent: 2em; margin-left: 5px; margin-right: 5px;"><span style="font-size: 16px; color: #7f7f7f;">限时限量兑换虚拟商品</span></p><p><br/></p></section><section class="_135editor" data-role="paragraph"><p style="text-indent: 2em; margin-left: 5px; margin-right: 5px;"><strong><span style="font-size: 16px;">四 积分如何获取？</span></strong></p></section><section class="_135editor" data-role="paragraph"><p style="text-indent: 2em; margin-left: 5px; margin-right: 5px;"><span style="font-size: 16px;">1、每日签到</span></p></section><section class="_135editor" data-role="paragraph"><p style="text-indent: 2em; margin-left: 5px; margin-right: 5px;"><span style="font-size: 16px; color: #7f7f7f;">进入游戏中心“个人”界面或者积分商城界面，点击签到，即可获得对应的积分奖励。</span></p></section><section class="_135editor" data-role="paragraph"><p style="text-indent: 2em; margin-left: 5px; margin-right: 5px;"><span style="font-size: 16px;">2、游戏充值</span></p></section><section class="_135editor" data-role="paragraph"><p style="text-indent: 2em; margin-left: 5px; margin-right: 5px;"><span style="font-size: 16px; color: #7f7f7f;">在平台任意游戏内每充值1元获得10积分</span></p><p><br/></p></section><section class="_135editor" data-role="paragraph"><p style="text-indent: 2em; margin-left: 5px; margin-right: 5px;"><strong><span style="font-size: 16px;">五：积分的有效期是多久？</span></strong></p></section><section class="_135editor" data-role="paragraph"><p style="text-indent: 2em; margin-left: 5px; margin-right: 5px;"><span style="font-size: 16px; color: #7f7f7f;">积分永久有效</span></p></section>',
+				userInfo: {},
+				Inv: 0,
+				integralBox: 0,
+				integralShop: 0,
+				pointstype: 0,
+				isReanlName: '+1000积分',
+				isBoundPhone: '+1000积分',
+				isFirstCharge: '+100积分',
+				ischeckIn: '+10积分',
+				receiveLogs: [],
 				inntergralInfo: [],
 				integralGift: [], //虚拟商品
-				entityList: [], // 实物商品列表
+				productList: {},
+				virtualProductList: [],
 				signIntegral: 10, //签到积分
 				pointsstatus: {}, //积分状态
 				attestationShow: false,
@@ -293,34 +261,55 @@
 				}, //实名认证info
 				emptyData: false,
 				noPrepaid: false, //未充值弹窗
-				recharged: false, //已充值弹窗
+				recharged: false, //已充值弹窗，
+				productPageNumber: 1,
+				virtualProductPageNumber: 1,
+
 			}
 		},
-		onLoad() {},
 		onShow() {
+			//查询用户信息
+			this.getUserInfo()
+			//查询商品领取记录
+			this.getReceiveLogs()
+			//查询实体和虚拟商品
+			this.getProductPage()
+			this.getProductpageVirtual()
+
+
 			this.getPointsStatus()
-			this.getPointsPage()
-			this.userInfos = getUserInfo()
-			// this.logged = getUserToken() !== null
-			// #ifdef H5
-			this.logged = getUserToken() !== null
-			// #endif
-			// #ifdef APP-PLUS
-			console.log('-------', getUserToken() == '')
-			this.logged = getUserToken() !== null && getUserToken() !== ''
-			console.log('logged', this.logged)
-			// #endif
-			this.getProductpageVirtual() //可兑换虚拟商品
-			this.getProductPage() //可兑换实体商品
-			this.productGetLog() // 兑换记录
-			this.getProduct() // 领取商品
-			if (!this.logged) {
-				uni.navigateTo({
-					url: '../login/login'
-				})
-			}
+
+			this.getProduct()
+			//查询积分获取记录
+			this.getPointsLogPage()
 		},
 		methods: {
+			/**
+			 * 获取用户信息
+			 */
+			getUserInfo() {
+				this.$u.api.getInfo().then(res => {
+					if (res.status) {
+						this.userInfo = res.data
+					} else {
+						//跳转登录页
+						uni.reLaunch({
+							url: '../login/login'
+						})
+					}
+				})
+			},
+			/**
+			 * 获取商品领取记录
+			 */
+			getReceiveLogs() {
+				this.$u.api.productGetLog().then(res => {
+					if (res.status) {
+						this.receiveLogs = res.data
+					}
+				})
+
+			},
 			// 跳转道手机绑定页面
 			goboundPhone() {
 				uni.navigateTo({
@@ -334,7 +323,7 @@
 					url: '../integral/detail?detail=' + str
 				})
 			},
-			getPointsPage() {
+			getPointsLogPage() {
 				this.$u.api.getPointsPage({
 					pageNumber: 1
 				}).then(res => {
@@ -431,28 +420,20 @@
 					}
 				})
 			},
-			//虚拟商品接口
-			getProductpageVirtual() {
-				this.$u.api.productpageVirtual({
-					pageNumber: 1
-				}).then(res => {
-					this.integralGift = res.data
-					console.log('虚拟商品', res.data)
-				})
-			},
 			// 实体商品接口
 			getProductPage() {
 				this.$u.api.productPage({
-					pageNumber: 1
+					pageNumber: this.productPageNumber
 				}).then(res => {
-					this.entityList = res.data
-					console.log('实体商品', res.data)
+					this.productList = res.data
 				})
 			},
-			// 兑换记录
-			productGetLog() {
-				this.$u.api.productGetLog({}).then(res => {
-					console.log('兑换记录', res.data)
+			//虚拟商品接口
+			getProductpageVirtual() {
+				this.$u.api.productpageVirtual({
+					pageNumber: this.virtualProductPageNumber
+				}).then(res => {
+					this.virtualProductList = res.data
 				})
 			},
 			// 领取商品
@@ -472,12 +453,12 @@
 </script>
 
 <style scoped lang="scss">
-	// page {
-	// 	background-color: #f3f6fa;
-	// }
+	page {
+		width: 100%;
+	}
 
 	.container {
-		width: 100%;
+		overflow-x: hidden;
 	}
 
 	.top-box-img {
@@ -547,14 +528,12 @@
 
 	.inv-h-se {
 		color: #ffffff;
-		background-color: #fe9b51;
-		// background-color: #f9c41f;
+		background-color: #19be6b;
 	}
 
 	.integralBox {
-		color: #fe9b51;
-		border-bottom: 1rpx solid #fe9b51;
-		// border-bottom: 1rpx solid #5BA7FF;
+		color: #19be6b;
+		border-bottom: 1rpx solid #19be6b;
 	}
 
 	.task-box {
@@ -673,9 +652,8 @@
 		width: 170px;
 		height: 220px;
 		border-radius: 1em;
-		// background-image: linear-gradient(#f9c41f, #eb4200);
-		// background-color: #FFFFFF;
 		background-color: #fae1be;
+		;
 	}
 
 	.gopay-top {

@@ -21,6 +21,9 @@ let getHotInfoUrl = '/index/getHotInfo';
 let productGetLogUrl = '/product/getLog';
 let getProductUrl = '/product/getProduct';
 let prePayUrl = '/pay/prePay';
+let productByIdUrl = '/product/getById';
+let getByMonthUrl = '/checkIn/getByMonth';
+let doCheckInUrl = '/checkIn/doCheckIn';
 
 
 // 此处第二个参数vm，就是我们在页面使用的this，你可以通过vm获取vuex等操作，更多内容详见uView对拦截器的介绍部分：
@@ -35,7 +38,7 @@ const install = (Vue, vm) => {
 	// 手机号验证码登录
 	let loginByPhone = (params = {}) => vm.$u.post(loginByPhoneUrl, params);
 	// 实名认证
-	let realName = (params = {}) => vm.$u.post(realNameUrl, params);
+	let realNameApi = (params = {}) => vm.$u.post(realNameUrl, params);
 	// 获取首页banner列表
 	let getBanners = (params = {}) => vm.$u.get(getBannersUrl, params);
 	// 获取游戏列表
@@ -70,6 +73,9 @@ const install = (Vue, vm) => {
 	let getProduct = (params = {}) => vm.$u.get(getProductUrl, params);
 	//支付
 	let prePay = (params = {}) => vm.$u.post(prePayUrl, params);
+	let productById = (params = {}) => vm.$u.get(productByIdUrl, params);
+	let getByMonth = (params = {}) => vm.$u.get(getByMonthUrl, params);
+	let doCheckIn = (params = {}) => vm.$u.post(doCheckInUrl, params);
 
 
 	// 将各个定义的接口名称，统一放进对象挂载到vm.$u.api(因为vm就是this，也即this.$u.api)下
@@ -78,7 +84,7 @@ const install = (Vue, vm) => {
 		bindPhone,
 		getInfo,
 		loginByPhone,
-		realName,
+		realNameApi,
 		getBanners,
 		getGames,
 		getHotBanners,
@@ -95,7 +101,10 @@ const install = (Vue, vm) => {
 		getHotInfo,
 		productGetLog,
 		getProduct,
-		prePay
+		prePay,
+		productById,
+		getByMonth,
+		doCheckIn
 	};
 }
 
