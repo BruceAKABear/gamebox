@@ -4,13 +4,16 @@
 		<!-- #ifdef H5 -->
 		<view>
 			<u-popup v-model="download" mode="top" :closeable="true">
-				<view style="width: 100%;padding: 20rpx 30rpx;display: flex;line-height: 50rpx;justify-content: space-around;">
-					<view style="height: 150rpx;width: 200rpx;">
-						<view style="font-size: 28rpx;">熙辰微游</view>
-						<image src="../../static/logo.png" mode="widthFix" style="width: 100rpx;"></image>
+				<view style="width: 100%;padding: 20rpx 30rpx;display: flex;line-height: 50rpx;justify-content: space-around;box-sizing: border-box;">
+					<view style="height: 150rpx;width: 60%;display: flex;line-height: 50rpx;box-sizing: border-box;">
+						<image src="../../static/logo.png" mode="widthFix" style="width: 100rpx;margin-top: 25rpx;"></image>
+						<view style="margin-top: 25rpx;margin-left: 20rpx;">
+							<view style="font-size: 26rpx;">熙辰微游</view>
+							<view style="font-size: 26rpx;">下载app，轻松玩游戏</view>
+						</view>
 					</view>
-					<view class="" style="line-height: 150rpx;width: 300rpx;">
-						<u-button size="mini">点击下载app</u-button>
+					<view class="" style="line-height: 150rpx;width: 30%;box-sizing: border-box;">
+						<u-button size="mini">免费下载</u-button>
 					</view>
 				</view>
 			</u-popup>
@@ -25,8 +28,22 @@
 			</swiper>
 		</view>
 		<!-- 首页滚动通知 -->
-		<u-notice-bar style="color:#ffaa00 ;" :more-icon="true" mode="vertical" :list="meaasgelist"></u-notice-bar>
-		<!-- <view class="" v-for="info in hotInfoList" :key="info.id"> </view>-->
+		<view class="" style="width: 100%;height: 80rpx;display: flex;padding: 0rpx 20rpx;box-sizing: border-box;">
+			<view style="width: 40rpx;height: 80rpx;box-sizing: border-box;line-height: 80rpx;">
+				<u-icon name="volume-up-fill" color="#ffaa00" size="36"></u-icon>
+			</view>
+			<scroll-view :scroll-top="scrollTop" scroll-y="true" class="scroll-Y" @scrolltoupper="upper" @scrolltolower="lower"
+			 @scroll="scroll">
+				<view>
+					<swiper style="height: 80rpx;" class="swiper" autoplay="true" interval="3000" duration="1500">
+						<swiper-item style="height: 80rpx;" v-for="(info,index) in hotInfoList" :key="index">
+							<view style="width: 100%;font-size: 30rpx;color: #ffaa00;padding-left: 10rpx;line-height: 80rpx;box-sizing: border-box;height: 80rpx;"
+							 @click="godesc(info)">{{info.title}}</view>
+						</swiper-item>
+					</swiper>
+				</view>
+			</scroll-view>
+		</view>
 		<!-- 最近在玩 -->
 		<view style="width: 100%;height: 180rpx;display: flex;" v-if="nowPlayOn">
 			<view class="nowPlay">最近在玩</view>
@@ -59,7 +76,9 @@
 					<view class="" style="display: flex;width: 80%;" @click="goGameInfo(info)">
 						<image :src="info.thumb" mode="aspectFill"></image>
 						<view class="game-desc">
-							<view class="game-name">{{info.name}}</view>
+							<!-- <view class="game-name">{{info.name}}</view> -->
+							<span class="game-name">{{info.name}}</span>
+							<span class="gift-squair">礼包</span>
 							<view class="game-info">{{info.description}}</view>
 						</view>
 					</view>
@@ -76,7 +95,9 @@
 					<view class="" style="display: flex;width: 80%;" @click="goGameInfo">
 						<image :src="info.thumb" mode="aspectFill"></image>
 						<view class="game-desc">
-							<view class="game-name">{{info.name}}</view>
+							<!-- <view class="game-name">{{info.name}}</view> -->
+							<span class="game-name">{{info.name}}</span>
+							<span class="gift-squair">礼包</span>
 							<view class="game-info">{{info.description}}</view>
 						</view>
 					</view>
@@ -90,7 +111,7 @@
 			<!-- 资讯 -->
 			<view class="tab-box" v-show="Inv == 2">
 				<view class="" v-for="info in messagelist">
-					<view class="" @click="godesc" style="display: flex;font-size: 28rpx;border-bottom: 1rpx solid #DBF1E1;padding: 20rpx 0;justify-content: space-between;">
+					<view class="" @click="godesc(info)" style="display: flex;font-size: 28rpx;border-bottom: 1rpx solid #DBF1E1;padding: 20rpx 0;justify-content: space-between;">
 						<view class="" style="display: flex;width: 60%;">
 							<view style="background-color: #71D5A1;color: #ffffff;padding: 0 5rpx;border-radius: 10%;height: 40rpx;height: 40rpx;">公告</view>
 							<view style="margin-left: 10rpx;width: 80%;">{{info.content}}</view>
@@ -180,9 +201,10 @@
 				console.log("去游戏详情页")
 			},
 			// 跳转到资讯详情页
-			godesc() {
+			godesc(info) {
+				let message = JSON.stringify(info);
 				uni.navigateTo({
-					url: '../index/message'
+					url: '../index/message?messageinfo=' + message
 				})
 			},
 			// 最近在玩列表滚动
@@ -451,14 +473,13 @@
 		margin-top: 30rpx;
 	}
 
-	// 验证码
-	.getyzmbut {
-		background-color: #19BE6B;
+	
+	.gift-squair {
+		font-size: 10px;
+		background-color: #2B85E4;
 		color: #ffffff;
-		width: 300rpx;
-		height: 70rpx;
-		font-size: 12px;
-		margin-top: 10px;
-		padding: 0;
+		padding: 0 10rpx;
+		border-radius: 30rpx;
+		margin-left: 10rpx;
 	}
 </style>

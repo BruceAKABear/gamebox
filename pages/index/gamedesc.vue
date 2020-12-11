@@ -1,21 +1,36 @@
 <template>
 	<view class="container">
-		<!-- <u-navbar title="游戏详情" :background="background" titleColor="#ffffff" back-icon-color="#ffffff"></u-navbar> -->
 		<view class="game-info">
 			<view class="game-top">
-				<image class="game-top-img" :src="gameInfo.thumb" mode=""></image>
-				<view class="game-top-text">
-					<p style="font-weight: 600;">{{gameInfo.name}}</p>
-					<p style="font-size: 26rpx;color: #606266;">{{gameInfo.description}}</p>
+				<image class="game-top-img" :src="gameInfo.thumb" mode="widthFix"></image>
+				<view style="position: relative;height: 170rpx;">
+					<view class="game-top-text">
+						<p style="font-weight: 600;">{{gameInfo.name}}</p>
+						<p style="font-size: 24rpx;color: #8c8f95;margin-top: 5rpx; word-break:break-all;">{{gameInfo.description}}</p>
+					</view>
+					<u-button type="success" size="mini" class="btn-block" @click="goGame(gameInfo)">进入游戏</u-button>
 				</view>
 			</view>
+			<view>
+				<u-grid :col="2">
+					<u-grid-item style="background-color: #f8f8f8;">
+						<view class="grid-text">语言</view>
+						<view class="grid-text">中文</view>
+					</u-grid-item>
+					<u-grid-item style="background-color: #f8f8f8;border-left: 1rpx solid #C8C9CC;">
+						<view class="grid-text">年龄</view>
+						<view class="grid-text">18+</view>
+					</u-grid-item>
+				</u-grid>
+			</view>
 			<view class="carousel">
+				<view class="" style="font-size: 32rpx;margin: 20rpx 0;font-weight: 600;">预览：</view>
 				<scroll-view @scroll="scroll1" :scroll-left="scrollLeft" class="scroll-x x" scroll-x="true">
 					<view class="scroll-list-x">
 						<!-- <image  :src="info.image" mode="widthFix"></image> -->
-						<swiper class="swiper" autoplay="true" interval="3000" duration="1500">
+						<swiper class="swiper" autoplay="true" interval="4000" duration="1500">
 							<swiper-item v-for="(info,index) in descimg" :key="index">
-								<image style="width: 100%;" :src="info.image" mode="widthFix"></image>
+								<image style="width: 98%;border-radius: 10rpx;" :src="info.image" mode="widthFix"></image>
 							</swiper-item>
 						</swiper>
 					</view>
@@ -23,11 +38,8 @@
 			</view>
 			<view class="game-desc">
 				<view class="" style="font-size: 32rpx;margin: 20rpx 0;font-weight: 600;">游戏简介：</view>
-				<view class="" style="font-size: 26rpx;color: #606266;text-indent:2em;">{{gameInfo.content}}</view>
+				<view class="" style="font-size: 26rpx;color: #606266;text-indent:2em; word-break:break-all;">{{gameInfo.content}}</view>
 			</view>
-		</view>
-		<view class="game-btn">
-			<u-button class="btn-block" @click="goGame(gameInfo)">进入游戏</u-button>
 		</view>
 	</view>
 </template>
@@ -63,8 +75,6 @@
 		onLoad(options) {
 			let gamedesc = JSON.parse(options.jsonStr);
 			this.gameInfo = gamedesc
-			console.log(this.gameInfo)
-			console.log(gamedesc);
 			let pics = gamedesc.bannerPics.split(',')
 			var imageList = [];
 			pics.forEach((item, index) => {
@@ -75,7 +85,6 @@
 				imageList.push(obj)
 			})
 			this.descimg = imageList
-			console.log('轮播图', imageList)
 
 		},
 		methods: {
@@ -100,9 +109,7 @@
 					id: info.id,
 					name: info.name,
 					thumb: info.thumb
-				}).then(res => {
-					console.log('玩游戏上报', res)
-				})
+				}).then(res => {})
 			},
 			// 点击跳转游戏链接
 			goGame(info) {
@@ -112,16 +119,15 @@
 					})
 					this.startGame(info)
 				} else {
-					console.log('请登录')
 					uni.navigateTo({
-						url:'../login/login'
+						url: '../login/login'
 					})
 				}
 			},
 			phoneLogin() {
 				this.loginshow = false;
 				uni.navigateTo({
-					url:'../login/login'
+					url: '../login/login'
 				})
 			},
 		}
@@ -129,41 +135,41 @@
 </script>
 
 <style scoped lang="scss">
-	page {
-		background-color: #f3f6fa;
+	.grid-text {
+		font-size: 28rpx;
+		margin-top: 4rpx;
+	}
+
+	.game-info {
+		padding-top: 30rpx;
 	}
 
 	.game-top {
 		background-color: #ffffff;
 		display: flex;
-		height: 150rpx;
+		height: 180rpx;
 	}
 
 	.game-top,
 	.carousel,
 	.game-desc {
-		padding: 30rpx 30rpx;
+		padding: 15rpx 30rpx;
 		background-color: #ffffff;
 	}
 
 	.game-top-text {
-		height: 150rpx;
-		line-height: 70rpx;
 		margin-left: 30rpx;
 	}
 
 	.game-top-img {
-		width: 150rpx;
-		height: 150rpx;
+		width: 180rpx;
 	}
 
 
 	.scroll-x,
 	.scroll-list-x {
 		width: 100%;
-		height: 300rpx;
 		text-align: center;
-		line-height: 300rpx;
 		display: inline-block;
 	}
 
@@ -173,14 +179,13 @@
 	}
 
 	.btn-block {
-		width: 100%;
-		position: fixed; //将button按钮固定在页面底部，注意，：和；是英文的哦，一定不要写成中文哦。
-		bottom: 5px;
-		background-color: #55aaff;
-		color: #ffffff;
+		position: absolute;
+		bottom: 0;
+		left: 30rpx;
+
 	}
 
-	.game-desc {
-		padding-bottom: 80rpx;
+	.headtop-img {
+		width: 100%;
 	}
 </style>

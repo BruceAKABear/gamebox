@@ -9,8 +9,8 @@
 					<view class="pay-top">
 						<view class="change-pay1">订单详情</view>
 						<view class="pro-box">
-							<view class="pro-name">订单详情订单详情{{pro.productName}}</view>
-							<view class="pro-price">订单详情{{pro.price/100}}</view>
+							<view class="pro-name">{{pro.productName}}</view>
+							<view class="pro-price">{{pro.price/100}}</view>
 						</view>
 					</view>
 					<view class="change-pay2">选择支付方式</view>
